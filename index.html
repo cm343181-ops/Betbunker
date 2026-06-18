@@ -1,15 +1,442 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="refresh" content="0; url=betbunker%20(5).html">
-  <title>Redirigiendo…</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>body{font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:#050E08;color:#E8F5EC;display:flex;align-items:center;justify-content:center;height:100vh;margin:0}a{color:#00FF88}</style>
-</head>
-<body>
-  <div>
-    Redirigiendo al archivo principal. Si no se redirige automáticamente, <a href="betbunker%20(5).html">haz clic aquí</a>.
-  </div>
-</body>
-</html>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Búnker Pool Bar">
+<meta name="theme-color" content="#050E08">
+<title>Búnker Pool Bar — Apuestas</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --neon: #00FF88;
+  --neon-dark: #00C060;
+  --neon-dim: rgba(0,255,136,0.15);
+  --neon-glow: rgba(0,255,136,0.35);
+  --bg: #050E08;
+  --bg2: #081208;
+  --bg3: #0D1A0F;
+  --bg4: #142016;
+  --border: rgba(0,255,136,0.08);
+  --border-strong: rgba(0,255,136,0.18);
+  --text: #E8F5EC;
+  --text-muted: #6B9B78;
+  --text-dim: #2E4A35;
+  --gold: #FFD700;
+  --gold-dark: #C8A800;
+  --white: #F0F0F0;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+html, body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 14px;
+  -webkit-tap-highlight-color: transparent;
+  overflow-x: hidden;
+}
+
+/* ══════════════════════════════
+   SPLASH SCREEN
+══════════════════════════════ */
+#splash {
+  position: fixed; inset: 0; z-index: 999;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: flex-end;
+  padding-bottom: calc(60px + var(--safe-bottom));
+  background: #000;
+  transition: opacity 0.7s ease;
+  overflow: hidden;
+}
+#splash.fade-out { opacity: 0; pointer-events: none; }
+
+/* Imagen de fondo con zoom lento */
+.splash-bg {
+  position: absolute; inset: -10%;
+  width: 120%; height: 120%;
+  background-size: cover; background-position: center;
+  filter: brightness(0.55) saturate(1.4);
+  animation: bg-zoom 12s ease-in-out infinite alternate;
+}
+@keyframes bg-zoom {
+  0%   { transform: scale(1) translateX(0); }
+  100% { transform: scale(1.12) translateX(-2%); }
+}
+
+/* Overlay con barrido de luz */
+.splash-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0,0,0,0.1) 0%,
+    rgba(0,0,0,0.05) 30%,
+    rgba(5,14,8,0.72) 65%,
+    rgba(5,14,8,0.97) 100%
+  );
+}
+
+/* Rayo de luz diagonal */
+.splash-light-ray {
+  position: absolute; top: -20%; left: -60%;
+  width: 40%; height: 160%;
+  background: linear-gradient(90deg, transparent, rgba(0,255,136,0.04), transparent);
+  transform: rotate(25deg);
+  animation: light-sweep 5s ease-in-out infinite;
+}
+@keyframes light-sweep {
+  0%   { left: -60%; opacity: 0; }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { left: 140%; opacity: 0; }
+}
+
+/* Partículas flotantes */
+.splash-particles {
+  position: absolute; inset: 0; pointer-events: none;
+}
+.particle {
+  position: absolute;
+  width: 3px; height: 3px; border-radius: 50%;
+  background: var(--neon);
+  opacity: 0;
+  animation: float-up var(--dur, 4s) ease-in var(--delay, 0s) infinite;
+}
+@keyframes float-up {
+  0%   { transform: translateY(0) scale(1); opacity: 0; }
+  15%  { opacity: 0.6; }
+  85%  { opacity: 0.3; }
+  100% { transform: translateY(-120vh) scale(0.3); opacity: 0; }
+}
+
+.splash-content {
+  position: relative; z-index: 2;
+  display: flex; flex-direction: column; align-items: center;
+  width: 100%; padding: 0 28px;
+  text-align: center;
+}
+
+/* Logo ring con entrada animada */
+.splash-logo-ring {
+  width: 90px; height: 90px; border-radius: 50%;
+  border: 2px solid var(--neon);
+  box-shadow: 0 0 20px var(--neon-glow), 0 0 60px rgba(0,255,136,0.15), inset 0 0 20px rgba(0,255,136,0.08);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 20px;
+  animation: pulse-ring 2.5s ease-in-out infinite, entry-drop 0.8s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+@keyframes entry-drop {
+  0%   { transform: translateY(-40px) scale(0.6); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+@keyframes pulse-ring {
+  0%, 100% { box-shadow: 0 0 20px var(--neon-glow), 0 0 60px rgba(0,255,136,0.15); }
+  50%       { box-shadow: 0 0 40px var(--neon-glow), 0 0 90px rgba(0,255,136,0.28), inset 0 0 30px rgba(0,255,136,0.12); }
+}
+
+/* Pelota rotando */
+.splash-ball {
+  font-size: 40px; line-height: 1;
+  filter: drop-shadow(0 0 8px rgba(0,255,136,0.5));
+  animation: ball-spin 6s linear infinite;
+}
+@keyframes ball-spin {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Nombre con entrada desde abajo */
+.splash-bar-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 52px; letter-spacing: 7px;
+  color: #fff;
+  text-shadow: 0 0 40px var(--neon-glow), 0 0 80px rgba(0,255,136,0.1), 0 2px 0 rgba(0,0,0,0.5);
+  line-height: 1; margin-bottom: 4px;
+  animation: entry-rise 0.9s cubic-bezier(0.34,1.56,0.64,1) 0.15s both;
+}
+@keyframes entry-rise {
+  0%   { transform: translateY(30px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+.splash-bar-name em {
+  color: var(--neon); font-style: normal;
+  text-shadow: 0 0 20px var(--neon), 0 0 40px rgba(0,255,136,0.4);
+  animation: neon-flicker 4s ease-in-out 2s infinite;
+}
+@keyframes neon-flicker {
+  0%, 89%, 91%, 93%, 100% { opacity: 1; }
+  90%, 92% { opacity: 0.6; }
+}
+
+.splash-subtitle {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; letter-spacing: 5px; text-transform: uppercase;
+  color: var(--neon-dark); margin-bottom: 6px;
+  animation: entry-rise 0.9s cubic-bezier(0.34,1.56,0.64,1) 0.25s both;
+}
+.splash-tagline {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px; color: rgba(255,255,255,0.5);
+  letter-spacing: 1px; margin-bottom: 36px;
+  font-weight: 300;
+  animation: entry-rise 0.9s cubic-bezier(0.34,1.56,0.64,1) 0.35s both;
+}
+
+/* Botón con entrada y shimmer */
+.splash-btn {
+  width: 100%; padding: 18px;
+  background: linear-gradient(135deg, #00FF88 0%, #00C060 100%);
+  color: #050E08; border: none; border-radius: 12px;
+  font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 5px;
+  cursor: pointer;
+  box-shadow: 0 0 30px rgba(0,255,136,0.4), 0 6px 0 #007A3D, inset 0 1px 0 rgba(255,255,255,0.3);
+  position: relative; top: 0; overflow: hidden;
+  transition: top 0.1s, box-shadow 0.1s;
+  touch-action: manipulation;
+  animation: btn-glow 2s ease-in-out infinite, entry-rise 0.9s cubic-bezier(0.34,1.56,0.64,1) 0.5s both;
+}
+/* Shimmer sweep sobre el botón */
+.splash-btn::after {
+  content: '';
+  position: absolute; top: 0; left: -100%;
+  width: 60%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+  transform: skewX(-20deg);
+  animation: btn-shimmer 3s ease-in-out 1.5s infinite;
+}
+@keyframes btn-shimmer {
+  0%   { left: -100%; }
+  40%  { left: 150%; }
+  100% { left: 150%; }
+}
+@keyframes btn-glow {
+  0%, 100% { box-shadow: 0 0 30px rgba(0,255,136,0.4), 0 6px 0 #007A3D; }
+  50%       { box-shadow: 0 0 55px rgba(0,255,136,0.7), 0 6px 0 #007A3D; }
+}
+.splash-btn:active { top: 6px; box-shadow: 0 0 20px rgba(0,255,136,0.3), 0 0px 0 #007A3D; }
+
+.splash-disclaimer {
+  margin-top: 14px;
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  letter-spacing: 1px; color: rgba(255,255,255,0.2);
+  text-transform: uppercase;
+  animation: entry-rise 0.9s ease 0.7s both;
+}
+
+/* ══════════════════════════════
+   HEADER
+══════════════════════════════ */
+header {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--bg);
+  border-bottom: 2px solid var(--neon-dark);
+  padding: 0 16px;
+  padding-top: var(--safe-top);
+  height: calc(54px + var(--safe-top));
+  display: flex; align-items: flex-end; justify-content: space-between;
+  padding-bottom: 8px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.6), 0 2px 0 rgba(0,255,136,0.1);
+}
+.logo-wrap { display: flex; align-items: center; gap: 10px; }
+.logo-ball { font-size: 24px; filter: drop-shadow(0 0 6px var(--neon-glow)); }
+.logo-text { display: flex; flex-direction: column; line-height: 1; }
+.logo-main { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 3px; color: #fff; }
+.logo-main em { color: var(--neon); font-style: normal; text-shadow: 0 0 10px var(--neon-glow); }
+.logo-sub { font-family: 'DM Mono', monospace; font-size: 7px; letter-spacing: 2px; color: var(--text-muted); text-transform: uppercase; margin-top: 2px; }
+.header-live {
+  display: flex; align-items: center; gap: 6px;
+  font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 1.5px;
+  color: var(--neon); text-transform: uppercase;
+}
+.live-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--neon);
+  box-shadow: 0 0 8px var(--neon);
+  animation: blink 1.2s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+/* ══════════════════════════════
+   BOTTOM NAV
+══════════════════════════════ */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+  background: var(--bg2);
+  border-top: 1px solid var(--border-strong);
+  display: flex;
+  padding-bottom: var(--safe-bottom);
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.5);
+}
+.bnav-btn {
+  flex: 1; padding: 12px 8px 10px;
+  background: transparent; border: none; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  color: var(--text-dim); transition: color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+  position: relative;
+}
+.bnav-btn.active { color: var(--neon); }
+.bnav-btn.active svg { filter: drop-shadow(0 0 4px var(--neon-glow)); }
+.bnav-btn svg { width: 22px; height: 22px; }
+.bnav-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; }
+.bnav-badge {
+  position: absolute; top: 6px; right: calc(50% - 20px);
+  background: var(--neon); color: #050E08;
+  font-family: 'Bebas Neue', sans-serif; font-size: 11px;
+  width: 16px; height: 16px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ══════════════════════════════
+   MAIN / PARTIDOS
+══════════════════════════════ */
+.main-scroll { padding: 16px 14px; padding-bottom: calc(80px + var(--safe-bottom)); }
+.section-head { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.section-tag {
+  font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--neon); background: var(--neon-dim); border: 1px solid rgba(0,255,136,0.2); padding: 3px 8px; border-radius: 3px;
+}
+.section-line { flex: 1; height: 1px; background: var(--border); }
+
+/* ══════════════════════════════
+   MATCH CARD
+══════════════════════════════ */
+.match {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 12px; margin-bottom: 12px; overflow: hidden;
+  transition: opacity 0.2s;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+.match.blocked { opacity: 0.35; pointer-events: none; }
+.match-header {
+  padding: 12px 14px 10px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+}
+.teams-row { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
+.teams-names { min-width: 0; }
+.team-local { font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 1px; color: var(--gold); display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.team-visit { font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 1px; color: var(--neon); display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 0 8px rgba(0,255,136,0.3); }
+.team-vs-sep { font-family: 'DM Mono', monospace; font-size: 8px; color: var(--text-dim); display: block; margin: 1px 0; }
+.match-meta { text-align: right; flex-shrink: 0; }
+.match-time { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-muted); }
+.status-badge { display: inline-block; font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 1px; padding: 2px 6px; border-radius: 3px; margin-top: 3px; }
+.status-open { color: var(--neon); background: var(--neon-dim); border: 1px solid rgba(0,255,136,0.2); }
+.status-closed { color: #FF4444; background: rgba(255,68,68,0.1); border: 1px solid rgba(255,68,68,0.2); }
+.crest { width: 36px; height: 36px; border-radius: 50%; background: var(--bg4); border: 1px solid var(--border-strong); display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; }
+.crest-flag { border-color: var(--border-strong); }
+.crest-flag img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.crest-initials { font-family: 'Bebas Neue', sans-serif; font-size: 10px; color: var(--text-muted); }
+
+/* ══════════════════════════════
+   ODDS BUTTONS
+══════════════════════════════ */
+.odds-row { padding: 10px 12px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; background: var(--bg3); }
+.odd-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 1px;
+  padding: 10px 4px; min-height: 62px; justify-content: center;
+  background: linear-gradient(180deg, #00E87A 0%, #00B85E 55%, #009048 100%);
+  border: none; border-radius: 8px; cursor: pointer; color: #050E08;
+  box-shadow: 0 5px 0 #005A2A, 0 7px 16px rgba(0,180,80,0.3), inset 0 1px 0 rgba(255,255,255,0.3);
+  position: relative; top: 0; transition: all 0.1s ease;
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+}
+.odd-btn:active:not(:disabled) {
+  top: 5px;
+  box-shadow: 0 0px 0 #005A2A, 0 2px 6px rgba(0,180,80,0.2), inset 0 2px 4px rgba(0,0,0,0.15);
+}
+.odd-btn.selected {
+  background: linear-gradient(180deg, #FFE033 0%, #FFD700 55%, #C8A800 100%);
+  box-shadow: 0 5px 0 #7A6400, 0 7px 16px rgba(255,200,0,0.4), inset 0 1px 0 rgba(255,255,255,0.4);
+}
+.odd-btn:disabled { background: linear-gradient(180deg, #1A2A1E 0%, #111A13 100%); box-shadow: 0 3px 0 #0A100B; cursor: not-allowed; opacity: 0.4; }
+.odd-label { font-family: 'DM Mono', monospace; font-size: 8px; letter-spacing: 1px; text-transform: uppercase; color: rgba(5,14,8,0.65); text-align: center; }
+.odd-value { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 1px; line-height: 1; color: #050E08; }
+.odd-btn.selected .odd-label { color: rgba(5,14,8,0.6); }
+.odd-btn.selected .odd-value { color: #1a0e00; }
+
+/* ══════════════════════════════
+   TICKET VIEW
+══════════════════════════════ */
+.ticket-view { padding: 16px 14px; padding-bottom: calc(80px + var(--safe-bottom)); }
+.ticket-empty-state { margin-top: 60px; text-align: center; color: var(--text-dim); font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 1px; line-height: 2; }
+.ticket-card { background: var(--bg2); border: 1px solid var(--border-strong); border-left: 3px solid var(--gold); border-radius: 12px; overflow: hidden; margin-bottom: 14px; }
+.ticket-card-header { background: var(--bg3); padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.ticket-match-name { font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 1px; color: var(--text); }
+.ticket-remove { background: none; border: none; color: var(--text-dim); cursor: pointer; padding: 4px; font-size: 18px; }
+.ticket-card-body { padding: 14px 16px; }
+.ticket-sel-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; }
+.ticket-sel-value { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 1px; color: var(--text); }
+.ticket-odd-value { font-family: 'Bebas Neue', sans-serif; font-size: 38px; color: var(--gold); letter-spacing: 2px; line-height: 1; margin-top: 4px; text-shadow: 0 0 12px rgba(255,215,0,0.3); }
+
+.stake-block { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 14px; }
+.stake-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; }
+.stake-input { width: 100%; background: var(--bg4); border: 1px solid var(--border-strong); border-radius: 8px; padding: 12px 14px; font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 2px; color: var(--text); outline: none; text-align: center; -webkit-appearance: none; }
+.stake-input:focus { border-color: var(--neon); box-shadow: 0 0 0 2px var(--neon-dim); }
+.quick-amounts { display: flex; gap: 8px; margin-top: 10px; }
+.quick-btn { flex: 1; padding: 9px 4px; background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; color: var(--neon); font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 1px; cursor: pointer; text-align: center; touch-action: manipulation; }
+.quick-btn:active { background: var(--bg4); border-color: var(--neon-dark); }
+
+.payout-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+.payout-cell { background: var(--bg4); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; }
+.payout-cell-label { font-family: 'DM Mono', monospace; font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 3px; }
+.payout-cell-value { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--text); }
+.payout-cell-value.highlight { color: var(--neon); text-shadow: 0 0 8px var(--neon-glow); }
+
+.confirm-btn {
+  width: 100%; padding: 16px;
+  background: linear-gradient(180deg, #00E87A 0%, #00B85E 55%, #009048 100%);
+  color: #050E08; border: none; border-radius: 10px;
+  font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 4px; cursor: pointer;
+  box-shadow: 0 6px 0 #005A2A, 0 8px 20px rgba(0,180,80,0.35), inset 0 1px 0 rgba(255,255,255,0.25);
+  position: relative; top: 0; transition: all 0.1s; touch-action: manipulation;
+}
+.confirm-btn:active { top: 6px; box-shadow: 0 0 0 #005A2A; }
+.confirm-btn:disabled { opacity: 0.35; pointer-events: none; }
+
+/* ══════════════════════════════
+   TICKET IMPRESO VISUAL
+══════════════════════════════ */
+.ticket-print-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.88); display: flex; align-items: center; justify-content: center; padding: 24px; }
+.ticket-print-overlay.hidden { display: none; }
+
+/* ── MARCADOR EN VIVO ── */
+.match-live-score {
+  background: rgba(255,68,68,0.08);
+  border-top: 1px solid rgba(255,68,68,0.15);
+  padding: 8px 14px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.live-score-teams {
+  display: flex; align-items: center; gap: 10px;
+  font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 2px;
+}
+.live-score-num { color: #fff; }
+.live-score-dash { color: var(--text-dim); font-size: 16px; }
+.live-badge {
+  font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 2px;
+  padding: 3px 8px; border-radius: 4px;
+  background: rgba(255,68,68,0.15); border: 1px solid rgba(255,68,68,0.3);
+  color: #FF6666; animation: blink 1s ease-in-out infinite;
+}
+.live-minute {
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  color: #FF6666; letter-spacing: 1px;
+}
+@keyframes trophy-bounce {
+  0%   { transform: scale(0) rotate(-20deg); opacity:0; }
+  60%  { transform: scale(1.2) rotate(5deg); }
+  100% { transform: scale(1) rotate(0deg); opacity:1; }
+}
+@keyframes title-drop {
+  0%   { transform: translateY(-30px); opacity:0; }
+  100% { transform: translateY(0); opacity:1; }
+}
+@keyframes scale-in {
+  0%   { transform: scale(0.7); opacity:0; }
+  100% { transform: scale(1); opacity:1; }
+}
+.ticket-paper { background: #fff; color: #111; border-radius: 8px; padding: 26px 20px; width: 100%; max-width: 310px; font-family: 'Courier New', monospace; box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 40px rgba(0,255,136,0.15); position: relative; }
+.tp-logo { font-size: 18px; font-weight: 900; letter-spacing: 3px; text-al
